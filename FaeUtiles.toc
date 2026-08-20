@@ -1,0 +1,32 @@
+## Interface: 120100
+## Title: Cortex
+## Notes: An outside-combat second brain for your character and Warband.
+## Author: Fae
+## Version: 0.1.0
+## SavedVariables: CortexDB
+## SavedVariablesPerCharacter: CortexCharacterDB
+
+Core\Namespace.lua
+Core\Constants.lua
+Locales\enUS.lua
+Locales\frFR.lua
+Core\ModuleRegistry.lua
+Core\Logger.lua
+Core\EventBus.lua
+Data\Schema.lua
+Data\Migrations.lua
+Data\Database.lua
+Context\FactStore.lua
+Context\ContextService.lua
+Goals\Goal.lua
+Goals\DependencyGraph.lua
+Goals\GoalEngine.lua
+Recommendations\Recommendation.lua
+Recommendations\RuleEngine.lua
+Recommendations\Prioritizer.lua
+Recommendations\RecommendationEngine.lua
+Planner\SessionPlanner.lua
+UI\Navigation.lua
+UI\MainWindow.lua
+UI\ChatCommands.lua
+Core\Bootstrap.lua

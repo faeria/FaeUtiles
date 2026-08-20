@@ -1,0 +1,20 @@
+{
+  "runtime.version": "Lua 5.1",
+  "workspace.checkThirdParty": false,
+  "diagnostics.globals": [
+    "CreateFrame",
+    "DEFAULT_CHAT_FRAME",
+    "GetLocale",
+    "InCombatLockdown",
+    "SlashCmdList",
+    "UIParent",
+    "UnitClass",
+    "UnitFullName",
+    "UnitGUID",
+    "UnitLevel",
+    "canaccessvalue",
+    "issecrettable",
+    "issecretvalue",
+    "time"
+  ]
+}
