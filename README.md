@@ -1,63 +1,75 @@
 # Cortex
 
-Cortex is an outside-combat second brain for World of Warcraft Retail. It turns account-wide goals and Warband context into explainable recommendations that fit the time a player has available.
+- Version: `0.1.0-alpha`
+- Game: World of Warcraft Retail 12.1.0 / Midnight
+- Interface: `120100`
 
-This repository currently contains the initial modular foundation: explicit service/module dependencies, an internal event bus, versioned persistence, a transient fact store, safe character capture, account-wide goals, a rule-based recommendation engine, a session planner, and a minimal localized window. It deliberately does not inspect live combat data or automate gameplay.
+## What is Cortex?
 
-## Compatibility
+Cortex is an outside-combat planning assistant for World of Warcraft Retail. It turns facts that the client safely exposes into persistent goals, explainable recommendations, session plans, and a progressively built view of characters previously seen by Cortex.
 
-- World of Warcraft Retail 12.1.0
-- Interface `120100`
-- No external libraries
-- Account SavedVariables: `CortexDB`
-- Per-character SavedVariables: `CortexCharacterDB`
+Cortex is read-only with respect to gameplay. It does not automate actions, choose combat abilities, or reconstruct restricted combat information.
 
-The development checkout is installed in a folder named `FaeUtiles`, so its active TOC is `FaeUtiles.toc`. A release archive should contain a `Cortex` folder and a correspondingly renamed `Cortex.toc`.
+## Current features
+
+- A searchable command palette opened with `/cortex`, with keyboard navigation and an optional key binding.
+- A non-secure dashboard with working Overview, Session Planner, and Warband pages. Goals, Weekly, and Gear pages are currently placeholders.
+- Versioned `CortexDB` persistence for settings, goals, bounded history, session memory, module states, share templates, and compact character snapshots.
+- Event-driven collectors for the active character, gear, currencies, quests, Great Vault state, instance, professions, reputation/renown, location, and local Warband context when the relevant API is available.
+- A generic Goal Engine, including a Great Vault-backed weekly completion goal.
+- Explainable recommendation rules for supported facts only, plus deterministic “Why?” traces.
+- A deterministic Session Planner with clearly labelled duration estimates and dependency/blocker handling.
+- Prospective Warband snapshots with `LIVE`, `CACHED`, and `UNKNOWN` states; offline characters are never queried dynamically.
+- Strict, non-executable Share Codes for goal, session, and task-list templates with Preview and Confirm before import.
+- A limited Debrief based only on Blizzard's native post-combat Damage Meter data when that API and an unambiguous session are available.
+- English fallback and French localization.
+
+## Installation
+
+1. Download or clone the repository.
+2. Place the addon at `World of Warcraft/_retail_/Interface/AddOns/FaeUtiles`.
+3. Verify that `FaeUtiles/FaeUtiles.toc` exists; `FaeUtiles` is the current technical addon id, while the name shown in WoW is **Cortex**.
+4. Enable Cortex on the character selection screen and log in.
+5. Run `/cortex version` and `/cortex status`.
+
+For a clean alpha test, back up and temporarily move `FaeUtiles.lua` and `FaeUtiles.lua.bak` from the account and character-specific `WTF/.../SavedVariables` directories before logging in. Those files contain `CortexDB` and the legacy `CortexCharacterDB` variable.
 
 ## Commands
 
-- `/cortex` — open or close the minimal Cortex window.
-- `/cortex help` — show help.
-- `/cortex goal add <title>` — add an account-wide goal.
-- `/cortex goal done <id>` — complete a goal.
-- `/cortex goals` — list active goals.
-- `/cortex now [minutes]` — build a plan for 5 to 240 minutes; the default is 30.
-- `/cortex status` — show version, active goal count, and known Warband character count.
-- `/cortex log <ERROR|WARN|INFO|DEBUG|TRACE>` — set and persist the log level.
-- `/cortex debug [on|off]` — toggle quickly between DEBUG and INFO.
+- `/cortex` — toggle the command palette.
+- `/cortex help` — list commands in game.
+- `/cortex version` — show the addon version.
+- `/cortex status` — show version, database schema, enabled modules, debug state, log level, and profiling state.
+- `/cortex goal add <title>` / `goal done <id>` / `goal weekly [count]` — manage the currently supported goal flows.
+- `/cortex goal list` / `goal debug` / `goals` — inspect goals.
+- `/cortex recommend` — inspect current explainable recommendations.
+- `/cortex why [recommendation <id>|goal <id>|fact <key>] [summary|detail|debug]` — explain known evidence and blockers.
+- `/cortex now [minutes|unlimited]` — build a session plan; the default budget is 30 minutes.
+- `/cortex share import [code]` / `share export <goal|session|tasks> <id>` — preview imports or export supported templates.
+- `/cortex debrief` — show the latest supported native post-combat summary, if one exists.
+- `/cortex log <ERROR|WARN|INFO|DEBUG|TRACE>` — persist the log level.
+- `/cortex debug [on|off]` — switch between INFO and DEBUG logging.
+- `/cortex debug db|context|refresh [collector]|profile [on|off|show|reset]` — developer diagnostics.
 
-## Architecture
+Debug logging and profiling are disabled by default.
 
-All addon-owned objects live in the private `Cortex` table supplied through `...`; Cortex is not exported to `_G`. Infrastructure is registered as services and domain behavior as modules:
+## Known limitations
 
-```lua
-local context = Cortex:GetService("Context")
-local goals = Cortex:GetModule("Goals")
+- This is an alpha. In-game validation across different classes, regions, UI scales, and instance types is still required.
+- Goals, Weekly, and Gear dashboard pages are placeholders; their underlying engines and facts are available through Overview, commands, and debug output only where documented.
+- There is no full Settings page yet. Window placement/scale, logging, profiling, and module states are persisted by the existing services.
+- Cortex only knows offline characters that were logged in while Cortex was enabled. Their data is cached and may be stale or unknown.
+- Gear upgrades expose remaining track levels when safely available, not upgrade cost, vendor eligibility, or DPS value. Missing permanent enchant detection is not implemented.
+- Profession snapshots do not include offline recipe catalogs and never prove that a specific craft can be completed.
+- Great Vault data is not a complete model of every weekly activity in the game.
+- Debrief does not provide missed interrupts, defensive-usage timelines, death causality, or generic tactical mistake detection.
 
-Cortex.Events:Publish("MY_INTERNAL_EVENT", value)
-Cortex:DisableModule("Planner")
-Cortex:EnableModule("Planner")
-```
+## Midnight limitations
 
-The initial modules are `Goals`, `Recommendations`, and `Planner`. Feature modules such as Weekly, Gear, Warband, Detective, Sharing, and Debrief will be added only when they contain implemented behavior. Module state overrides are stored in `CortexDB.settings.modules`; dependencies are enabled first and prevent unsafe disablement while an enabled dependent still requires them.
+Retail 12.x can mark values or tables as secret and restrict combat-related APIs. Cortex treats inaccessible data as unavailable, does not compare or persist it, and does not use it for recommendations.
 
-## Safety model
+Collectors that can encounter restricted values are deferred until combat lockdown ends. Cortex does not register combat-log readers, use addon communication for combat telemetry, create secure action buttons, invoke protected gameplay actions, or run an `OnUpdate` analysis loop. Debrief reads only documented native aggregates after combat.
 
-Cortex reads only the current player's identity and level. Capture is refused during combat, and every potentially restricted return is checked with the Secret Value access primitives before comparison, formatting, or table indexing. If login occurs during combat, capture waits for `PLAYER_REGEN_ENABLED`.
+The API capability matrix is in [`docs/API_CAPABILITIES.md`](docs/API_CAPABILITIES.md), Debrief constraints are in [`docs/DEBRIEF_FEASIBILITY.md`](docs/DEBRIEF_FEASIBILITY.md), and the latest code audit is in [`docs/TECHNICAL_AUDIT.md`](docs/TECHNICAL_AUDIT.md).
 
-The bootstrap owns the only game-event frame and publishes lifecycle events onto the internal bus. Keyed work can be deferred until combat lockdown ends. The minimal window is unnamed and non-secure. There are no secure templates, protected actions, hooks, combat-log readers, aura readers, addon communications, timers, or `OnUpdate` scripts in this slice.
-
-## Manual validation
-
-Enable Lua errors, then verify:
-
-1. Log in or use `/reload`; no message should appear at the default INFO level.
-2. Run `/cortex`, confirm the minimal window opens, then run it again to close it.
-3. Run `/cortex status` and confirm the current character is counted.
-4. Run `/cortex now 30` with no goals and confirm the onboarding recommendation.
-5. Add a goal, list it, request a 30-minute plan, then complete it.
-6. Run `/cortex debug` twice and confirm DEBUG then INFO are persisted.
-7. Use `/reload` and confirm goals, module settings, and the selected log level persist.
-8. Reload during combat when practical; confirm capture completes after combat with no protected-action or taint warning.
-
-API feasibility is recorded in [`docs/API_CAPABILITIES.md`](docs/API_CAPABILITIES.md). Architecture decisions and validation are recorded in [`plans/initial-architecture.md`](plans/initial-architecture.md).
+Maintainers should also read [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) and [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md).

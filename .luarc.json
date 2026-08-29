@@ -1,11 +1,32 @@
 {
   "runtime.version": "Lua 5.1",
   "workspace.checkThirdParty": false,
+  "workspace.ignoreDir": [
+    "tests"
+  ],
   "diagnostics.globals": [
     "CreateFrame",
+    "C_CurrencyInfo",
+    "C_Item",
+    "C_Map",
+    "C_MajorFactions",
+    "C_PaperDollInfo",
+    "C_QuestLog",
+    "C_Reputation",
+    "C_RestrictedActions",
+    "C_Timer",
+    "C_WeeklyRewards",
     "DEFAULT_CHAT_FRAME",
+    "Enum",
     "GetLocale",
+    "GetInstanceInfo",
+    "GetInventoryItemID",
+    "GetInventoryItemLink",
+    "GetProfessionInfo",
+    "GetProfessions",
+    "GetTimePreciseSec",
     "InCombatLockdown",
+    "IsInInstance",
     "SlashCmdList",
     "UIParent",
     "UnitClass",
@@ -15,6 +36,7 @@
     "canaccessvalue",
     "issecrettable",
     "issecretvalue",
-    "time"
+    "time",
+    "unpack"
   ]
 }

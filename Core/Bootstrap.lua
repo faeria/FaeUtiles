@@ -54,6 +54,7 @@ local function initialize()
 
     local database = Cortex:GetService("Database")
     Cortex:GetService("Logger"):SetLevel(database:GetLogLevel())
+    Cortex:GetService("Profiler"):SetEnabled(database:IsProfilingEnabled())
 
     local modulesApplied, moduleReason = Cortex.Registry:ApplyModuleStates()
     if not modulesApplied then
@@ -73,6 +74,7 @@ eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
 eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
+    Cortex:GetService("Profiler"):RecordEvent("wow.core", event)
     if event == "ADDON_LOADED" then
         local loadedAddonName = ...
         if loadedAddonName ~= addonName then

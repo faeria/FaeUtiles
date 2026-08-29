@@ -62,6 +62,7 @@ function EventBus:UnsubscribeOwner(owner)
 end
 
 function EventBus:Publish(eventName, ...)
+    Cortex:GetService("Profiler"):RecordEvent("internal", eventName)
     local subscribers = self.subscribers[eventName]
     if not subscribers or #subscribers == 0 then
         return 0
@@ -87,4 +88,4 @@ function EventBus:Publish(eventName, ...)
 end
 
 Cortex.Events = EventBus
-Cortex:RegisterService("Events", EventBus, { services = { "Logger" } })
+Cortex:RegisterService("Events", EventBus, { services = { "Logger", "Profiler" } })

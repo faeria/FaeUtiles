@@ -257,6 +257,17 @@ function Cortex:IsModuleEnabled(name)
     return descriptor and descriptor.enabled or false
 end
 
+function Cortex:GetEnabledModuleNames()
+    local names = {}
+    for index = 1, #Registry.moduleOrder do
+        local name = Registry.moduleOrder[index]
+        if Registry.modules[name].enabled then
+            names[#names + 1] = name
+        end
+    end
+    return names
+end
+
 function Registry:ApplyModuleStates()
     local database = Cortex:GetService("Database")
     for index = 1, #self.moduleOrder do

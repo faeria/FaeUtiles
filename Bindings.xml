@@ -1,0 +1,7 @@
+<Bindings>
+    <Binding name="CORTEX_COMMAND_PALETTE" category="ADDONS">
+        if SlashCmdList and SlashCmdList.CORTEX then
+            SlashCmdList.CORTEX("");
+        end
+    </Binding>
+</Bindings>
