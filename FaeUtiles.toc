@@ -2,7 +2,7 @@
 ## Title: Cortex
 ## Notes: An outside-combat second brain for your character and Warband.
 ## Author: Fae
-## Version: 0.1.0
+## Version: 0.1.0-alpha
 ## SavedVariables: CortexDB
 ## SavedVariablesPerCharacter: CortexCharacterDB
 
@@ -12,21 +12,68 @@ Locales\enUS.lua
 Locales\frFR.lua
 Core\ModuleRegistry.lua
 Core\Logger.lua
+Core\Profiler.lua
 Core\EventBus.lua
+Core\CommandRegistry.lua
 Data\Schema.lua
 Data\Migrations.lua
+Data\Repositories.lua
 Data\Database.lua
+Data\WarbandRepository.lua
+Data\TemplateRepository.lua
 Context\FactStore.lua
+Context\CollectorRegistry.lua
+Context\CollectorUtils.lua
+Context\Collectors\CharacterCollector.lua
+Context\Collectors\GearCollector.lua
+Context\Collectors\CurrencyCollector.lua
+Context\Collectors\QuestCollector.lua
+Context\Collectors\WeeklyCollector.lua
+Context\Collectors\InstanceCollector.lua
+Context\Collectors\ProfessionCollector.lua
+Context\Collectors\ReputationCollector.lua
+Context\Collectors\LocationCollector.lua
+Context\Collectors\WarbandCollector.lua
 Context\ContextService.lua
 Goals\Goal.lua
 Goals\DependencyGraph.lua
 Goals\GoalEngine.lua
+Sharing\Serializer.lua
+Sharing\Deserializer.lua
+Sharing\Versioning.lua
+Sharing\Validation.lua
+Sharing\ShareCode.lua
+Warband\WarbandIntelligence.lua
+Debrief\DebriefService.lua
 Recommendations\Recommendation.lua
 Recommendations\RuleEngine.lua
+Recommendations\Rules.lua
 Recommendations\Prioritizer.lua
 Recommendations\RecommendationEngine.lua
+Detective\Evidence.lua
+Detective\Condition.lua
+Detective\Blocker.lua
+Detective\Explanation.lua
+Detective\DetectiveService.lua
+Planner\DurationEstimator.lua
+Planner\PlanEntry.lua
+Planner\Plan.lua
 Planner\SessionPlanner.lua
+CommandPalette\SearchProvider.lua
+UI\Theme.lua
+UI\Components\Button.lua
+UI\Components\Card.lua
+UI\Components\Badge.lua
+UI\Components\ProgressBar.lua
+UI\Components\Section.lua
+UI\Components\ScrollList.lua
+UI\OverviewPage.lua
+UI\PlaceholderPage.lua
+UI\SessionPlannerPage.lua
+UI\WarbandPage.lua
+UI\ShareCodeDialog.lua
 UI\Navigation.lua
 UI\MainWindow.lua
+UI\CommandPalette.lua
 UI\ChatCommands.lua
 Core\Bootstrap.lua
